@@ -267,8 +267,8 @@ public class RecipientPresenter implements PermissionPingCallback {
             updateRecipientExpanderVisibility();
         }
 
-        String cryptoProvider = account.getOpenPgpProvider();
-        setCryptoProvider(cryptoProvider);
+        // This does not strictly depend on the account, but this is as good a point to set this as any
+        setupCryptoProvider();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -604,7 +604,8 @@ public class RecipientPresenter implements PermissionPingCallback {
         }
     }
 
-    private void setCryptoProvider(String cryptoProvider) {
+    private void setupCryptoProvider() {
+        String cryptoProvider = K9.getCryptoProvider();
 
         boolean providerIsBound = openPgpServiceConnection != null && openPgpServiceConnection.isBound();
         boolean isSameProvider = cryptoProvider != null && cryptoProvider.equals(this.cryptoProvider);

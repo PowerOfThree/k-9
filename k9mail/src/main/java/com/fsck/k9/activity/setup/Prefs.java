@@ -36,6 +36,7 @@ import com.fsck.k9.preferences.StorageEditor;
 import com.fsck.k9.preferences.TimePickerPreference;
 
 import com.fsck.k9.service.MailService;
+import org.openintents.openpgp.util.OpenPgpAppPreference;
 
 
 public class Prefs extends K9PreferenceActivity {
@@ -87,6 +88,8 @@ public class Prefs extends K9PreferenceActivity {
     private static final String PREFERENCE_LOCK_SCREEN_NOTIFICATION_VISIBILITY = "lock_screen_notification_visibility";
     private static final String PREFERENCE_HIDE_USERAGENT = "privacy_hide_useragent";
     private static final String PREFERENCE_HIDE_TIMEZONE = "privacy_hide_timezone";
+
+    private static final String PREFERENCE_CRYPTO_APP = "crypto_app";
 
     private static final String PREFERENCE_AUTOFIT_WIDTH = "messageview_autofit_width";
     private static final String PREFERENCE_BACKGROUND_OPS = "background_ops";
@@ -142,6 +145,8 @@ public class Prefs extends K9PreferenceActivity {
     private CheckBoxPreference mHideTimeZone;
     private CheckBoxPreference mWrapFolderNames;
     private CheckBoxListPreference mVisibleRefileActions;
+
+    private OpenPgpAppPreference mCryptoProvider;
 
     private CheckBoxPreference mQuietTimeEnabled;
     private CheckBoxPreference mDisableNotificationDuringQuietTime;
@@ -369,6 +374,16 @@ public class Prefs extends K9PreferenceActivity {
         mHideUserAgent.setChecked(K9.hideUserAgent());
         mHideTimeZone.setChecked(K9.hideTimeZone());
 
+        mCryptoProvider = (OpenPgpAppPreference) findPreference(PREFERENCE_CRYPTO_APP);
+        mCryptoProvider.setValue(K9.getCryptoProvider());
+        mCryptoProvider.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String value = newValue.toString();
+                mCryptoProvider.setValue(value);
+                return false;
+            }
+        });
+
         mAttachmentPathPreference = findPreference(PREFERENCE_ATTACHMENT_DEF_PATH);
         mAttachmentPathPreference.setSummary(K9.getAttachmentDefaultPath());
         mAttachmentPathPreference
@@ -523,6 +538,8 @@ public class Prefs extends K9PreferenceActivity {
         K9.DEBUG_SENSITIVE = mSensitiveLogging.isChecked();
         K9.setHideUserAgent(mHideUserAgent.isChecked());
         K9.setHideTimeZone(mHideTimeZone.isChecked());
+
+        K9.setCryptoProvider(mCryptoProvider.getValue());
 
         StorageEditor editor = storage.edit();
         K9.save(editor);

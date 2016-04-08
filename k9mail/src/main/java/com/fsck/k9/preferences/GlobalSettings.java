@@ -59,6 +59,9 @@ public class GlobalSettings {
         s.put("confirmDeleteStarred", Settings.versions(
                 new V(2, new BooleanSetting(false))
             ));
+        s.put("cryptoProvider", Settings.versions(
+                new V(42, new StringSetting(K9.NO_CRYPTO_PROVIDER))
+            ));
         s.put("confirmSpam", Settings.versions(
                 new V(1, new BooleanSetting(false))
             ));
