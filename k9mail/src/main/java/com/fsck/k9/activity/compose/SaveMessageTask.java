@@ -10,7 +10,8 @@ import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.helper.Contacts;
 import com.fsck.k9.mail.Message;
 
-public class SaveMessageTask extends AsyncTask<Void, Void, Void> {
+public class
+SaveMessageTask extends AsyncTask<Void, Void, Void> {
     Context context;
     Account account;
     Contacts contacts;

@@ -206,7 +206,7 @@ class MemorizingMessagingListener extends MessagingListener {
         Memory memory = getMemory(account, null);
         memory.processingCommandTitle = commandTitle;
     }
-
+9
     @Override
     public synchronized void pendingCommandCompleted(Account account, String commandTitle) {
         Memory memory = getMemory(account, null);

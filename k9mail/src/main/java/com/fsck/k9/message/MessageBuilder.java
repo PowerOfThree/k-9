@@ -136,7 +136,7 @@ public abstract class MessageBuilder {
         return new MimeMultipart(boundary);
     }
 
-    private void buildBody(MimeMessage message) throws MessagingException {
+    private void createMimeMultipart(MimeMessage message) throws MessagingException {
         // Build the body.
         // TODO FIXME - body can be either an HTML or Text part, depending on whether we're in
         // HTML mode or not.  Should probably fix this so we don't mix up html and text parts.

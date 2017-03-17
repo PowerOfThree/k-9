@@ -1,11 +1,16 @@
 
 package com.fsck.k9.activity;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -1395,6 +1400,13 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     }
 
     private void onImport() {
+        // Try to autoimport latest settings
+        Uri settingsUri = tryImportMostRecent();
+        if(settingsUri != null) {
+            onImport(settingsUri);
+            return;
+        }
+
         Intent i = new Intent(Intent.ACTION_GET_CONTENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
         i.setType("*/*");
@@ -1408,6 +1420,20 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         } else {
             showDialog(DIALOG_NO_FILE_MANAGER);
         }
+    }
+
+    private Uri tryImportMostRecent() {
+        // Get list of exported settings files
+        File exportDir = new File("/sdcard/com.fsck.k9");
+        String[] contents = exportDir.list();/*(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return file.isFile()
+                        && s.matches("settings(-\\d+)?\\.k9s");
+            }
+        });*/
+
+        return Uri.fromFile(new File(contents[contents.length-1]));
     }
 
     @Override
