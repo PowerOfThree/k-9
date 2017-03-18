@@ -2,6 +2,7 @@
 package com.fsck.k9;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,10 @@ import com.fsck.k9.preferences.Storage;
 import com.fsck.k9.preferences.StorageEditor;
 import com.fsck.k9.provider.UnreadWidgetProvider;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
+import com.fsck.k9.report.HttpReportSink;
+import com.fsck.k9.report.LogReportSink;
+import com.fsck.k9.report.Report;
+import com.fsck.k9.report.ReportSink;
 import com.fsck.k9.service.BootReceiver;
 import com.fsck.k9.service.MailService;
 import com.fsck.k9.service.ShutdownReceiver;
@@ -66,6 +71,8 @@ public class K9 extends Application {
     public static Application app = null;
     public static File tempDirectory;
     public static final String LOG_TAG = "k9";
+    public static ReportSink logReportSink = new LogReportSink();
+    public static ReportSink httpReportSink = new HttpReportSink("http://127.0.0.1/k9/report");
 
     /**
      * Name of the {@link SharedPreferences} file used to store the last known version of the
@@ -514,6 +521,18 @@ public class K9 extends Application {
         super.onCreate();
         app = this;
         Globals.setContext(this);
+
+        /*
+         * Register uncaught exceptions handler
+         */
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                Report report = new Report(thread, throwable);
+                logReportSink.handle(report);
+                httpReportSink.handle(report);
+            }
+        });
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override public boolean enabled() {
