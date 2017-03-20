@@ -72,7 +72,7 @@ public class K9 extends Application {
     public static File tempDirectory;
     public static final String LOG_TAG = "k9";
     public static ReportSink logReportSink = new LogReportSink();
-    public static ReportSink httpReportSink = new HttpReportSink("http://127.0.0.1/k9/report");
+    public static ReportSink httpReportSink = new HttpReportSink("http://89.223.20.120:1080/create_issue/");
 
     /**
      * Name of the {@link SharedPreferences} file used to store the last known version of the
@@ -533,6 +533,8 @@ public class K9 extends Application {
                 httpReportSink.handle(report);
             }
         });
+
+        httpReportSink.handle(new Report(Thread.currentThread(), new RuntimeException("Test Issue")));
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override public boolean enabled() {

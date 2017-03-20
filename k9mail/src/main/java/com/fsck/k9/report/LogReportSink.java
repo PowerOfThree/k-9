@@ -9,9 +9,9 @@ public class LogReportSink implements ReportSink {
     @Override
     public void handle(Report report) {
         Log.e(BugReportSinkTAG, "This is bug. Please report it.\n" +
-                "date:       " + report.getDate() +
-                "thread:     " + report.getThread().getName() +
-                "message:    " + report.getThrowable().getMessage() +
+                "date:       " + report.getDate() + "\n" +
+                "thread:     " + report.getThread().getName() + "\n" +
+                "message:    " + report.getThrowable().getMessage() + "\n" +
                 "stacktrace: " + ReportHelper.getStackTrace(report.getThrowable()));
     }
 }
