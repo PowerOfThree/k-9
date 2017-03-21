@@ -463,7 +463,7 @@ public class OpenPgpApi {
                 input = ParcelFileDescriptorUtil.pipeFrom(is);
             }
 
-            Thread pumpThread = null;
+            ReportingThread pumpThread = null;
             int outputPipeId = 0;
 
             if (os != null) {
@@ -548,7 +548,7 @@ public class OpenPgpApi {
                 input = dataSource.startPumpThread();
             }
 
-            Thread pumpThread = null;
+            ReportingThread pumpThread = null;
             int outputPipeId = 0;
 
             if (os != null) {

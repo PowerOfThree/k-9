@@ -136,7 +136,7 @@ public class MessagingController {
     private final Contacts contacts;
     private final NotificationController notificationController;
 
-    private final Thread controllerThread;
+    private final ReportingThread controllerThread;
 
     private final BlockingQueue<Command> queuedCommands = new PriorityBlockingQueue<>();
     private final Set<MessagingListener> listeners = new CopyOnWriteArraySet<>();
@@ -167,7 +167,7 @@ public class MessagingController {
         this.notificationController = notificationController;
         this.contacts = contacts;
 
-        controllerThread = new Thread(new Runnable() {
+        controllerThread = new ReportingThread(new Runnable() {
             @Override
             public void run() {
                 runInBackground();
@@ -204,7 +204,7 @@ public class MessagingController {
                         command.runnable.run();
                     } catch (UnavailableAccountException e) {
                         // retry later
-                        new Thread() {
+                        new ReportingThread() {
                             @Override
                             public void run() {
                                 try {

@@ -230,7 +230,7 @@ public class MockImapServer {
         }
     }
 
-    private static class MockServerThread extends Thread {
+    private static class MockServerThread extends ReportingThread {
         private final ServerSocket serverSocket;
         private final Deque<ImapInteraction> interactions;
         private final CountDownLatch waitForConnectionClosed;

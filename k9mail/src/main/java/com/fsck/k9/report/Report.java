@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Report {
     private Date date;
-    private Thread thread;
+    private ReportingThread thread;
     private Throwable throwable;
 
     public Report(Thread thread, Throwable throwable) {

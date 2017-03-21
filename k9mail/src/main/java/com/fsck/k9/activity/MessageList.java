@@ -1557,7 +1557,7 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             K9.setK9MessageViewThemeSetting(K9.Theme.DARK);
         }
 
-        new Thread(new Runnable() {
+        new ReportingThread(new Runnable() {
             @Override
             public void run() {
                 Context appContext = getApplicationContext();

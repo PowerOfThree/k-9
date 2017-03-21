@@ -40,7 +40,7 @@ class ImapFolderPusher extends ImapFolder {
     private final IdleStopper idleStopper = new IdleStopper();
     private final TracingWakeLock wakeLock;
     private final List<ImapResponse> storedUntaggedResponses = new ArrayList<ImapResponse>();
-    private Thread listeningThread;
+    private ReportingThread listeningThread;
     private volatile boolean stop = false;
     private volatile boolean idling = false;
 
@@ -62,7 +62,7 @@ class ImapFolderPusher extends ImapFolder {
                 throw new IllegalStateException("start() called twice");
             }
 
-            listeningThread = new Thread(new PushRunnable());
+            listeningThread = new ReportingThread(new PushRunnable());
             listeningThread.start();
         }
     }

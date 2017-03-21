@@ -224,7 +224,7 @@ public class MockSmtpServer {
         }
     }
 
-    private static class MockServerThread extends Thread {
+    private static class MockServerThread extends ReportingThread {
         private final ServerSocket serverSocket;
         private final Deque<SmtpInteraction> interactions;
         private final CountDownLatch waitForConnectionClosed;

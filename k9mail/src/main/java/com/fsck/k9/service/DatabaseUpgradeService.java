@@ -172,7 +172,7 @@ public class DatabaseUpgradeService extends Service {
      * Start a background thread for upgrading the databases.
      */
     private void startUpgradeInBackground() {
-        new Thread("DatabaseUpgradeService") {
+        new ReportingThread("DatabaseUpgradeService") {
             @Override
             public void run() {
                 upgradeDatabases();

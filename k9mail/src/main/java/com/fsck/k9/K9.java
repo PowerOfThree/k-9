@@ -45,6 +45,7 @@ import com.fsck.k9.report.HttpReportSink;
 import com.fsck.k9.report.LogReportSink;
 import com.fsck.k9.report.Report;
 import com.fsck.k9.report.ReportSink;
+import com.fsck.k9.report.ReportingThread;
 import com.fsck.k9.service.BootReceiver;
 import com.fsck.k9.service.MailService;
 import com.fsck.k9.service.ShutdownReceiver;
@@ -71,8 +72,6 @@ public class K9 extends Application {
     public static Application app = null;
     public static File tempDirectory;
     public static final String LOG_TAG = "k9";
-    public static ReportSink logReportSink = new LogReportSink();
-    public static ReportSink httpReportSink = new HttpReportSink("http://89.223.20.120:1080/create_issue/");
 
     /**
      * Name of the {@link SharedPreferences} file used to store the last known version of the
@@ -412,7 +411,7 @@ public class K9 extends Application {
         final BlockingQueue<Handler> queue = new SynchronousQueue<Handler>();
 
         // starting a new thread to handle unmount events
-        new Thread(new Runnable() {
+        new ReportingThread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
@@ -529,12 +528,10 @@ public class K9 extends Application {
             @Override
             public void uncaughtException(Thread thread, Throwable throwable) {
                 Report report = new Report(thread, throwable);
-                logReportSink.handle(report);
-                httpReportSink.handle(report);
+                ReportingThread.logReportSink.handle(report);
+                ReportingThread.httpReportSink.handle(report);
             }
         });
-
-        httpReportSink.handle(new Report(Thread.currentThread(), new RuntimeException("Test Issue")));
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override public boolean enabled() {
