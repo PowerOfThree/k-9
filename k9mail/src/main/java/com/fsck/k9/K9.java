@@ -39,7 +39,6 @@ import com.fsck.k9.preferences.Storage;
 import com.fsck.k9.preferences.StorageEditor;
 import com.fsck.k9.provider.UnreadWidgetProvider;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
-import com.fsck.k9.mail.report.DemoException;
 import com.fsck.k9.mail.report.Report;
 import com.fsck.k9.mail.report.ReportingThread;
 import com.fsck.k9.service.BootReceiver;
@@ -528,8 +527,6 @@ public class K9 extends Application {
                 ReportingThread.httpReportSink.handle(report);
             }
         });
-
-        (new DemoException()).start();
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override public boolean enabled() {
