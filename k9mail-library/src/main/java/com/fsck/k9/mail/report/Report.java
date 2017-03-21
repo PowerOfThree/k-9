@@ -36,7 +36,13 @@ public class Report {
         json.beginObject();
         json.name("date").value(date.getTime());
         json.name("thread").value(thread.getName());
-        json.name("message").value(throwable.getMessage());
+        StringBuilder title = new StringBuilder();
+        if (throwable.getCause() != null)
+            title.append(throwable.getCause());
+        title.append(":");
+        if (throwable.getMessage() != null)
+            title.append(throwable.getMessage());
+        json.name("title").value(title.toString());
         json.name("stacktrace").value(ReportHelper.getStackTrace(throwable).toString());
         json.endObject();
     }

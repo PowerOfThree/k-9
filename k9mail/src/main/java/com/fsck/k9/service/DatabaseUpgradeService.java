@@ -17,6 +17,7 @@ import com.fsck.k9.Preferences;
 import com.fsck.k9.activity.UpgradeDatabases;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
+import com.fsck.k9.mail.report.ReportingThread;
 import com.fsck.k9.mailstore.UnavailableStorageException;
 
 /**

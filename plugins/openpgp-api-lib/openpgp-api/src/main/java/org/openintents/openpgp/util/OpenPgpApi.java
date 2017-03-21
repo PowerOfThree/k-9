@@ -547,7 +547,7 @@ public class OpenPgpApi {
                 input = dataSource.startPumpThread();
             }
 
-            ReportingThread pumpThread = null;
+            Thread pumpThread = null;
             int outputPipeId = 0;
 
             if (os != null) {
