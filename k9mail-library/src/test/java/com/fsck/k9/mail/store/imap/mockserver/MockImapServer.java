@@ -23,6 +23,7 @@ import java.util.zip.InflaterInputStream;
 
 import android.annotation.SuppressLint;
 
+import com.fsck.k9.mail.report.ReportingThread;
 import com.jcraft.jzlib.JZlib;
 import com.jcraft.jzlib.ZOutputStream;
 import javax.net.ssl.KeyManagerFactory;
