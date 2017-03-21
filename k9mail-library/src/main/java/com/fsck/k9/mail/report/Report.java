@@ -1,4 +1,4 @@
-package com.fsck.k9.report;
+package com.fsck.k9.mail.report;
 
 import android.util.JsonWriter;
 
@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Report {
     private Date date;
-    private ReportingThread thread;
+    private Thread thread;
     private Throwable throwable;
 
     public Report(Thread thread, Throwable throwable) {

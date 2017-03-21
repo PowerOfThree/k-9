@@ -1,4 +1,4 @@
-package com.fsck.k9.report;
+package com.fsck.k9.mail.report;
 
 public class ReportHelper {
     static StringBuilder getStackTrace(Throwable t) {

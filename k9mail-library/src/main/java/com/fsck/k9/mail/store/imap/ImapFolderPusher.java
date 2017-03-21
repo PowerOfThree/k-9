@@ -21,6 +21,7 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.PushReceiver;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
+import com.fsck.k9.mail.report.ReportingThread;
 import com.fsck.k9.mail.store.RemoteStore;
 
 import static com.fsck.k9.mail.K9MailLib.LOG_TAG;

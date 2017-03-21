@@ -1,8 +1,6 @@
-package com.fsck.k9.report;
+package com.fsck.k9.mail.report;
 
 import android.util.Log;
-
-import java.util.Arrays;
 
 public class LogReportSink implements ReportSink {
     private static final String BugReportSinkTAG = "K9_BUGREPORT";

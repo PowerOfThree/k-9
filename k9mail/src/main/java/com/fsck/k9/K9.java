@@ -2,7 +2,6 @@
 package com.fsck.k9;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +33,15 @@ import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.K9MailLib;
 import com.fsck.k9.mail.Message;
-import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.internet.BinaryTempFileBody;
 import com.fsck.k9.mailstore.LocalStore;
 import com.fsck.k9.preferences.Storage;
 import com.fsck.k9.preferences.StorageEditor;
 import com.fsck.k9.provider.UnreadWidgetProvider;
 import com.fsck.k9.mail.ssl.LocalKeyStore;
-import com.fsck.k9.report.HttpReportSink;
-import com.fsck.k9.report.LogReportSink;
-import com.fsck.k9.report.Report;
-import com.fsck.k9.report.ReportSink;
-import com.fsck.k9.report.ReportingThread;
+import com.fsck.k9.mail.report.DemoException;
+import com.fsck.k9.mail.report.Report;
+import com.fsck.k9.mail.report.ReportingThread;
 import com.fsck.k9.service.BootReceiver;
 import com.fsck.k9.service.MailService;
 import com.fsck.k9.service.ShutdownReceiver;
@@ -532,6 +528,8 @@ public class K9 extends Application {
                 ReportingThread.httpReportSink.handle(report);
             }
         });
+
+        (new DemoException()).start();
 
         K9MailLib.setDebugStatus(new K9MailLib.DebugStatus() {
             @Override public boolean enabled() {

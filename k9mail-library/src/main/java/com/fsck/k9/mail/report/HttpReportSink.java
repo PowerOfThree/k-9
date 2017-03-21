@@ -1,24 +1,16 @@
-package com.fsck.k9.report;
+package com.fsck.k9.mail.report;
 
-import android.app.Activity;
 import android.util.JsonWriter;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class HttpReportSink implements ReportSink {
     private URL sinkUrl;

@@ -16,7 +16,6 @@
 
 package org.openintents.openpgp.util;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -463,7 +462,7 @@ public class OpenPgpApi {
                 input = ParcelFileDescriptorUtil.pipeFrom(is);
             }
 
-            ReportingThread pumpThread = null;
+            Thread pumpThread = null;
             int outputPipeId = 0;
 
             if (os != null) {
