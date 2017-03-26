@@ -174,72 +174,7 @@ public class ChooseFolder extends K9ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.folder_select_option, menu);
-        configureFolderSearchView(menu);
         return true;
-    }
-
-    private void configureFolderSearchView(Menu menu) {
-        final MenuItem folderMenuItem = menu.findItem(R.id.filter_folders);
-        final SearchView folderSearchView = (SearchView) folderMenuItem.getActionView();
-        folderSearchView.setQueryHint(getString(R.string.folder_list_filter_hint));
-        folderSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                folderMenuItem.collapseActionView();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mAdapter.getFilter().filter(newText);
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.display_1st_class: {
-                setDisplayMode(FolderMode.FIRST_CLASS);
-                return true;
-            }
-            case R.id.display_1st_and_2nd_class: {
-                setDisplayMode(FolderMode.FIRST_AND_SECOND_CLASS);
-                return true;
-            }
-            case R.id.display_not_second_class: {
-                setDisplayMode(FolderMode.NOT_SECOND_CLASS);
-                return true;
-            }
-            case R.id.display_all: {
-                setDisplayMode(FolderMode.ALL);
-                return true;
-            }
-            case R.id.list_folders: {
-                onRefresh();
-                return true;
-            }
-            default: {
-                return super.onOptionsItemSelected(item);
-            }
-        }
-    }
-
-    private void onRefresh() {
-        MessagingController.getInstance(getApplication()).listFolders(mAccount, true, mListener);
-    }
-
-    private void setDisplayMode(FolderMode aMode) {
-        mMode = aMode;
-        // invalidate the current filter as it is working on an inval
-        if (mMyFilter != null) {
-            mMyFilter.invalidate();
-        }
-        //re-populate the list
-        MessagingController.getInstance(getApplication()).listFolders(mAccount, false, mListener);
     }
 
     private MessagingListener mListener = new SimpleMessagingListener() {

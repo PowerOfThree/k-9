@@ -268,22 +268,6 @@
 
         <ListPreference
             android:persistent="false"
-            android:key="folder_display_mode"
-            android:title="@string/account_settings_folder_display_mode_label"
-            android:entries="@array/account_settings_folder_display_mode_entries"
-            android:entryValues="@array/account_settings_folder_display_mode_values"
-            android:dialogTitle="@string/account_settings_folder_display_mode_label" />
-
-        <ListPreference
-            android:persistent="false"
-            android:key="folder_target_mode"
-            android:title="@string/account_settings_folder_target_mode_label"
-            android:entries="@array/account_settings_folder_target_mode_entries"
-            android:entryValues="@array/account_settings_folder_target_mode_values"
-            android:dialogTitle="@string/account_settings_folder_target_mode_label" />
-
-        <ListPreference
-            android:persistent="false"
             android:key="searchable_folders"
             android:title="@string/account_settings_searchable_label"
             android:entries="@array/account_settings_searchable_entries"
