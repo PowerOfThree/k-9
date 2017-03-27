@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.util.Log;
+import timber.log.Timber;
 import com.fsck.k9.*;
 import com.fsck.k9.activity.FolderInfoHolder;
 import com.fsck.k9.activity.K9PreferenceActivity;
@@ -62,7 +62,7 @@ public class FolderSettings extends K9PreferenceActivity {
             mFolder = localStore.getFolder(folderName);
             mFolder.open(Folder.OPEN_MODE_RW);
         } catch (MessagingException me) {
-            Log.e(K9.LOG_TAG, "Unable to edit folder " + folderName + " preferences", me);
+            Timber.e(me, "Unable to edit folder %s preferences", folderName);
             return;
         }
 
@@ -71,7 +71,7 @@ public class FolderSettings extends K9PreferenceActivity {
             Store store = mAccount.getRemoteStore();
             isPushCapable = store.isPushCapable();
         } catch (Exception e) {
-            Log.e(K9.LOG_TAG, "Could not get remote store", e);
+            Timber.e(e, "Could not get remote store");
         }
 
         addPreferencesFromResource(R.xml.folder_settings_preferences);
@@ -83,83 +83,11 @@ public class FolderSettings extends K9PreferenceActivity {
 
         mInTopGroup = (CheckBoxPreference)findPreference(PREFERENCE_IN_TOP_GROUP);
         mInTopGroup.setChecked(mFolder.isInTopGroup());
-        mIntegrate = (CheckBoxPreference)findPreference(PREFERENCE_INTEGRATE);
-        mIntegrate.setChecked(mFolder.isIntegrate());
-
-        mDisplayClass = (ListPreference) findPreference(PREFERENCE_DISPLAY_CLASS);
-        mDisplayClass.setValue(mFolder.getDisplayClass().name());
-        mDisplayClass.setSummary(mDisplayClass.getEntry());
-        mDisplayClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mDisplayClass.findIndexOfValue(summary);
-                mDisplayClass.setSummary(mDisplayClass.getEntries()[index]);
-                mDisplayClass.setValue(summary);
-                return false;
-            }
-        });
-
-        mSyncClass = (ListPreference) findPreference(PREFERENCE_SYNC_CLASS);
-        mSyncClass.setValue(mFolder.getRawSyncClass().name());
-        mSyncClass.setSummary(mSyncClass.getEntry());
-        mSyncClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mSyncClass.findIndexOfValue(summary);
-                mSyncClass.setSummary(mSyncClass.getEntries()[index]);
-                mSyncClass.setValue(summary);
-                return false;
-            }
-        });
-
-        mPushClass = (ListPreference) findPreference(PREFERENCE_PUSH_CLASS);
-        mPushClass.setEnabled(isPushCapable);
-        mPushClass.setValue(mFolder.getRawPushClass().name());
-        mPushClass.setSummary(mPushClass.getEntry());
-        mPushClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mPushClass.findIndexOfValue(summary);
-                mPushClass.setSummary(mPushClass.getEntries()[index]);
-                mPushClass.setValue(summary);
-                return false;
-            }
-        });
-
-        mNotifyClass = (ListPreference) findPreference(PREFERENCE_NOTIFY_CLASS);
-        mNotifyClass.setValue(mFolder.getRawNotifyClass().name());
-        mNotifyClass.setSummary(mNotifyClass.getEntry());
-        mNotifyClass.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mNotifyClass.findIndexOfValue(summary);
-                mNotifyClass.setSummary(mNotifyClass.getEntries()[index]);
-                mNotifyClass.setValue(summary);
-                return false;
-            }
-        });
     }
 
     private void saveSettings() throws MessagingException {
         mFolder.setInTopGroup(mInTopGroup.isChecked());
-        mFolder.setIntegrate(mIntegrate.isChecked());
-        // We call getPushClass() because display class changes can affect push class when push class is set to inherit
-        FolderClass oldPushClass = mFolder.getPushClass();
-        FolderClass oldDisplayClass = mFolder.getDisplayClass();
-        mFolder.setDisplayClass(FolderClass.valueOf(mDisplayClass.getValue()));
-        mFolder.setSyncClass(FolderClass.valueOf(mSyncClass.getValue()));
-        mFolder.setPushClass(FolderClass.valueOf(mPushClass.getValue()));
-        mFolder.setNotifyClass(FolderClass.valueOf(mNotifyClass.getValue()));
-
         mFolder.save();
-
-        FolderClass newPushClass = mFolder.getPushClass();
-        FolderClass newDisplayClass = mFolder.getDisplayClass();
-
-        if (oldPushClass != newPushClass
-                || (newPushClass != FolderClass.NO_CLASS && oldDisplayClass != newDisplayClass)) {
-            MailService.actionRestartPushers(getApplication(), null);
-        }
     }
 
     @Override
@@ -167,7 +95,7 @@ public class FolderSettings extends K9PreferenceActivity {
         try {
             saveSettings();
         } catch (MessagingException e) {
-            Log.e(K9.LOG_TAG, "Saving folder settings failed", e);
+            Timber.e(e, "Saving folder settings failed");
         }
 
         super.onPause();
