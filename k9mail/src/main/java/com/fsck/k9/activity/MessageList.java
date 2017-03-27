@@ -1021,8 +1021,6 @@ public class MessageList extends K9Activity implements MessageListFragmentListen
             menu.findItem(R.id.toggle_unread).setVisible(false);
             menu.findItem(R.id.select_text).setVisible(false);
             menu.findItem(R.id.toggle_message_view_theme).setVisible(false);
-            //menu.findItem(R.id.show_headers).setVisible(false);
-            //menu.findItem(R.id.hide_headers).setVisible(false);
         } else {
             // hide prev/next buttons in split mode
             if (mDisplayMode != DisplayMode.MESSAGE_VIEW) {
