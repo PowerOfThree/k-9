@@ -23,6 +23,7 @@
         android:icon="?attr/iconActionCompose"
         android:showAsAction="always"
         android:title="@string/compose_action"/>
+
     <item
         android:id="@+id/send_messages"
         android:icon="?attr/iconActionUpload"

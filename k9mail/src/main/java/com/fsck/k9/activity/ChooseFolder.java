@@ -27,7 +27,6 @@ import com.fsck.k9.Preferences;
 import com.fsck.k9.R;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.controller.SimpleMessagingListener;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mailstore.LocalFolder;
 
@@ -177,7 +176,7 @@ public class ChooseFolder extends K9ListActivity {
         return true;
     }
 
-    private MessagingListener mListener = new SimpleMessagingListener() {
+    private MessagingListener mListener = new MessagingListener() {
         @Override
         public void listFoldersStarted(Account account) {
             if (!account.equals(mAccount)) {

@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils.TruncateAt;
 import android.text.format.DateUtils;
-import timber.log.Timber;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -52,7 +52,6 @@ import com.fsck.k9.activity.setup.FolderSettings;
 import com.fsck.k9.activity.setup.Prefs;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
-import com.fsck.k9.controller.SimpleMessagingListener;
 import com.fsck.k9.helper.SizeFormatter;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
@@ -211,7 +210,7 @@ public class FolderList extends K9ListActivity {
         final TracingWakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FolderList checkMail");
         wakeLock.setReferenceCounted(false);
         wakeLock.acquire(K9.WAKE_LOCK_TIMEOUT);
-        MessagingListener listener = new SimpleMessagingListener() {
+        MessagingListener listener = new MessagingListener() {
             @Override
             public void synchronizeMailboxFinished(Account account, String folder, int totalMessagesInMailbox, int numNewMessages) {
                 if (!account.equals(mAccount)) {
@@ -379,7 +378,7 @@ public class FolderList extends K9ListActivity {
         super.onResume();
 
         if (!mAccount.isAvailable(this)) {
-            Timber.i("account unavaliabale, not showing folder-list but account-list");
+            Log.i(K9.LOG_TAG, "account unavaliabale, not showing folder-list but account-list");
             Accounts.listAccounts(this);
             finish();
             return;
@@ -477,8 +476,30 @@ public class FolderList extends K9ListActivity {
     }
 
     private void onClearFolder(Account account, String folderName) {
-        MessagingController.getInstance(getApplication()).clearFolder(account, folderName, mAdapter.mListener);
+        // There has to be a cheaper way to get at the localFolder object than this
+        LocalFolder localFolder = null;
+        try {
+            if (account == null || folderName == null || !account.isAvailable(FolderList.this)) {
+                Log.i(K9.LOG_TAG, "not clear folder of unavailable account");
+                return;
+            }
+            localFolder = account.getLocalStore().getFolder(folderName);
+            localFolder.open(Folder.OPEN_MODE_RW);
+            localFolder.clearAllMessages();
+        } catch (Exception e) {
+            Log.e(K9.LOG_TAG, "Exception while clearing folder", e);
+        } finally {
+            if (localFolder != null) {
+                localFolder.close();
+            }
+        }
+
+        onRefresh(!REFRESH_REMOTE);
     }
+
+
+
+
 
     private void sendMail(Account account) {
         MessagingController.getInstance(getApplication()).sendPendingMessages(account, mAdapter.mListener);
@@ -535,7 +556,7 @@ public class FolderList extends K9ListActivity {
             onCompact(mAccount);
 
             return true;
-        
+
         case R.id.display_all: {
             setDisplayMode(FolderMode.ALL);
             return true;
@@ -788,7 +809,7 @@ public class FolderList extends K9ListActivity {
                 try {
                     if (account != null && folderName != null) {
                         if (!account.isAvailable(FolderList.this)) {
-                            Timber.i("not refreshing folder of unavailable account");
+                            Log.i(K9.LOG_TAG, "not refreshing folder of unavailable account");
                             return;
                         }
                         localFolder = account.getLocalStore().getFolder(folderName);
@@ -801,7 +822,7 @@ public class FolderList extends K9ListActivity {
                         }
                     }
                 } catch (Exception e) {
-                    Timber.e(e, "Exception while populating folder");
+                    Log.e(K9.LOG_TAG, "Exception while populating folder", e);
                 } finally {
                     if (localFolder != null) {
                         localFolder.close();
@@ -927,7 +948,8 @@ public class FolderList extends K9ListActivity {
             if (position <= getCount()) {
                 return  getItemView(position, convertView, parent);
             } else {
-                Timber.e("getView with illegal position=%d called! count is only %d", position, getCount());
+                Log.e(K9.LOG_TAG, "getView with illegal positon=" + position
+                      + " called! count is only " + getCount());
                 return null;
             }
         }
@@ -1006,7 +1028,8 @@ public class FolderList extends K9ListActivity {
                 try {
                     folder.unreadMessageCount  = folder.folder.getUnreadMessageCount();
                 } catch (Exception e) {
-                    Timber.e("Unable to get unreadMessageCount for %s:%s", mAccount.getDescription(), folder.name);
+                    Log.e(K9.LOG_TAG, "Unable to get unreadMessageCount for " + mAccount.getDescription() + ":"
+                          + folder.name);
                 }
             }
             if (folder.unreadMessageCount > 0) {
@@ -1025,9 +1048,11 @@ public class FolderList extends K9ListActivity {
                 try {
                     folder.flaggedMessageCount = folder.folder.getFlaggedMessageCount();
                 } catch (Exception e) {
-                    Timber.e("Unable to get flaggedMessageCount for %s:%s", mAccount.getDescription(), folder.name);
+                    Log.e(K9.LOG_TAG, "Unable to get flaggedMessageCount for " + mAccount.getDescription() + ":"
+                          + folder.name);
                 }
-            }
+
+                    }
 
             if (K9.messageListStars() && folder.flaggedMessageCount > 0) {
                 holder.flaggedMessageCount.setText(String.format("%d", folder.flaggedMessageCount));
@@ -1113,8 +1138,8 @@ public class FolderList extends K9ListActivity {
         }
 
         /**
-         * Filter to search for occurrences of the search-expression in any place of the
-         * folder-name instead of doing just a prefix-search.
+         * Filter to search for occurences of the search-expression in any place of the
+         * folder-name instead of doing jsut a prefix-search.
          *
          * @author Marcus@Wolschon.biz
          */

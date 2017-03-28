@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import timber.log.Timber;
+import android.util.Log;
 import com.fsck.k9.*;
 import com.fsck.k9.activity.FolderInfoHolder;
 import com.fsck.k9.activity.K9PreferenceActivity;
@@ -62,7 +62,7 @@ public class FolderSettings extends K9PreferenceActivity {
             mFolder = localStore.getFolder(folderName);
             mFolder.open(Folder.OPEN_MODE_RW);
         } catch (MessagingException me) {
-            Timber.e(me, "Unable to edit folder %s preferences", folderName);
+            Log.e(K9.LOG_TAG, "Unable to edit folder " + folderName + " preferences", me);
             return;
         }
 
@@ -71,7 +71,7 @@ public class FolderSettings extends K9PreferenceActivity {
             Store store = mAccount.getRemoteStore();
             isPushCapable = store.isPushCapable();
         } catch (Exception e) {
-            Timber.e(e, "Could not get remote store");
+            Log.e(K9.LOG_TAG, "Could not get remote store", e);
         }
 
         addPreferencesFromResource(R.xml.folder_settings_preferences);
@@ -83,6 +83,7 @@ public class FolderSettings extends K9PreferenceActivity {
 
         mInTopGroup = (CheckBoxPreference)findPreference(PREFERENCE_IN_TOP_GROUP);
         mInTopGroup.setChecked(mFolder.isInTopGroup());
+
     }
 
     private void saveSettings() throws MessagingException {
@@ -95,7 +96,7 @@ public class FolderSettings extends K9PreferenceActivity {
         try {
             saveSettings();
         } catch (MessagingException e) {
-            Timber.e(e, "Saving folder settings failed");
+            Log.e(K9.LOG_TAG, "Saving folder settings failed", e);
         }
 
         super.onPause();
