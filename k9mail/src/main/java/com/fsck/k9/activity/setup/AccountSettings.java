@@ -329,46 +329,6 @@ public class AccountSettings extends K9PreferenceActivity {
             }
         });
 
-        mDisplayMode = (ListPreference) findPreference(PREFERENCE_DISPLAY_MODE);
-        mDisplayMode.setValue(mAccount.getFolderDisplayMode().name());
-        mDisplayMode.setSummary(mDisplayMode.getEntry());
-        mDisplayMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mDisplayMode.findIndexOfValue(summary);
-                mDisplayMode.setSummary(mDisplayMode.getEntries()[index]);
-                mDisplayMode.setValue(summary);
-                return false;
-            }
-        });
-
-        mSyncMode = (ListPreference) findPreference(PREFERENCE_SYNC_MODE);
-        mSyncMode.setValue(mAccount.getFolderSyncMode().name());
-        mSyncMode.setSummary(mSyncMode.getEntry());
-        mSyncMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mSyncMode.findIndexOfValue(summary);
-                mSyncMode.setSummary(mSyncMode.getEntries()[index]);
-                mSyncMode.setValue(summary);
-                return false;
-            }
-        });
-
-
-        mTargetMode = (ListPreference) findPreference(PREFERENCE_TARGET_MODE);
-        mTargetMode.setValue(mAccount.getFolderTargetMode().name());
-        mTargetMode.setSummary(mTargetMode.getEntry());
-        mTargetMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                final String summary = newValue.toString();
-                int index = mTargetMode.findIndexOfValue(summary);
-                mTargetMode.setSummary(mTargetMode.getEntries()[index]);
-                mTargetMode.setValue(summary);
-                return false;
-            }
-        });
-
         mDeletePolicy = (ListPreference) findPreference(PREFERENCE_DELETE_POLICY);
         if (!mIsSeenFlagSupported) {
             removeListEntry(mDeletePolicy, DeletePolicy.MARK_AS_READ.preferenceString());
@@ -561,22 +521,9 @@ public class AccountSettings extends K9PreferenceActivity {
                     return false;
                 }
             });
-            mPushMode = (ListPreference) findPreference(PREFERENCE_PUSH_MODE);
-            mPushMode.setValue(mAccount.getFolderPushMode().name());
-            mPushMode.setSummary(mPushMode.getEntry());
-            mPushMode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    final String summary = newValue.toString();
-                    int index = mPushMode.findIndexOfValue(summary);
-                    mPushMode.setSummary(mPushMode.getEntries()[index]);
-                    mPushMode.setValue(summary);
-                    return false;
-                }
-            });
         } else {
             PreferenceScreen incomingPrefs = (PreferenceScreen) findPreference(PREFERENCE_SCREEN_INCOMING);
             incomingPrefs.removePreference((PreferenceScreen) findPreference(PREFERENCE_SCREEN_PUSH_ADVANCED));
-            incomingPrefs.removePreference((ListPreference) findPreference(PREFERENCE_PUSH_MODE));
             mMainScreen.removePreference(mSearchScreen);
         }
 
