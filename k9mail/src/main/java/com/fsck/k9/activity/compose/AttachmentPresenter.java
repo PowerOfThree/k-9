@@ -1,6 +1,9 @@
 package com.fsck.k9.activity.compose;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -9,12 +12,19 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import com.fsck.k9.activity.compose.ComposeCryptoStatus.AttachErrorState;
 import com.fsck.k9.activity.loader.AttachmentContentLoader;
@@ -176,6 +186,11 @@ public class AttachmentPresenter {
     }
 
     private void addAttachmentAndStartLoader(Attachment attachment) {
+        String path = getImagePath(attachment.uri);
+        if(isJpeg(path)) {
+            attachment = resizeAttachment(path, attachment);
+        }
+
         attachments.put(attachment.uri, attachment);
         attachmentMvpView.addAttachmentView(attachment);
 
@@ -186,6 +201,58 @@ public class AttachmentPresenter {
         } else {
             throw new IllegalStateException("Attachment can only be added in URI_ONLY or METADATA state!");
         }
+    }
+
+    // Resized .jpeg attachement if it's size exceeds 1M
+    private Attachment resizeAttachment(String originalImagePath, Attachment attachment) {
+        final long MEGABYTE = 1024 * 1024;
+
+        File file = new File(originalImagePath);
+        long fileSize = file.length();
+        if(file.length() <= MEGABYTE) {
+           return attachment;
+        }
+
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap originalImage = BitmapFactory.decodeFile(originalImagePath, bmOptions);
+
+        double scaleFactor = (double) MEGABYTE  / (double) fileSize;
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+        int targetW = (int) Math.floor(photoW * scaleFactor);
+        int targetH = (int) Math.floor(photoH * scaleFactor);
+
+        Bitmap resizedImage = Bitmap.createScaledBitmap(originalImage, targetW, targetH, true);
+
+        String resizedImagePath = Environment.getExternalStorageDirectory()
+            .getPath().toString()+"/"+file.getName();
+        File newFile = new File(resizedImagePath);
+
+        try {
+            FileOutputStream filecon = new FileOutputStream(newFile);
+            resizedImage.compress(Bitmap.CompressFormat.JPEG, 90, filecon);
+        } catch (IOException e) {
+            Log.e("resizeAttachment", e.toString());
+        }
+
+        return Attachment.createAttachment(Uri.fromFile(newFile), attachment.loaderId, attachment.contentType);
+    }
+
+    private boolean isJpeg(String path) {
+        return path.endsWith("jpg")
+            || path.endsWith("jpeg")
+            || path.endsWith("JPG")
+            || path.endsWith("JPEG");
+    }
+
+    // Retrieve actual filename from Gallery uri
+    private String getImagePath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(context, uri, projection, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     private void initAttachmentInfoLoader(Attachment attachment) {
